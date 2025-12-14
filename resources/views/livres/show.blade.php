@@ -5,22 +5,31 @@
 @section('content')
 <div class="row">
     <div class="col-md-8">
-        <h1>{{ $livre->titre }}</h1>
-        <hr>
-        <p><strong>Auteur:</strong> {{ $livre->auteur }}</p>
-        <p><strong>Catégorie:</strong> {{ $livre->categorie->nom }}</p>
-        <p><strong>Date de publication:</strong> {{ $livre->date_publication->format('d/m/Y') }}</p>
-        @if($livre->description)
-            <div class="mt-3">
-                <h5>Description</h5>
-                <p>{{ $livre->description }}</p>
+        <div class="card card-custom mb-4">
+            <div class="card-header-custom">
+                <h1 class="mb-0" style="color: white;">{{ $livre->titre }}</h1>
             </div>
-        @endif
-        <div class="mt-3">
-            @if(isset($livre->isReservedByCurrentUser) && $livre->isReservedByCurrentUser)
-                <span class="badge bg-warning text-dark fs-6">
-                    <i class="bi bi-bookmark-check"></i> Réservé par vous
-                </span>
+            <div class="card-body">
+                <p class="mb-3">
+                    <i class="bi bi-person text-primary"></i> <strong style="color: #2c3e50;">Auteur:</strong> {{ $livre->auteur }}
+                </p>
+                <p class="mb-3">
+                    <i class="bi bi-tag text-primary"></i> <strong style="color: #2c3e50;">Catégorie:</strong> {{ $livre->categorie->nom }}
+                </p>
+                <p class="mb-3">
+                    <i class="bi bi-calendar text-primary"></i> <strong style="color: #2c3e50;">Date de publication:</strong> {{ $livre->date_publication->format('d/m/Y') }}
+                </p>
+                @if($livre->description)
+                    <div class="mt-4">
+                        <h5 style="color: #2c3e50;">Description</h5>
+                        <p style="color: #555; line-height: 1.8;">{{ $livre->description }}</p>
+                    </div>
+                @endif
+                <div class="mt-4">
+                    @if(isset($livre->isReservedByCurrentUser) && $livre->isReservedByCurrentUser)
+                        <span class="badge-custom-warning">
+                            <i class="bi bi-bookmark-check"></i> Réservé par vous
+                        </span>
                 @php
                     $userReservation = auth()->user()->reservations()
                         ->where('livre_id', $livre->id)
@@ -42,22 +51,26 @@
                         </small>
                     </div>
                 @endif
-            @elseif($livre->disponible)
-                <span class="badge bg-success fs-6">
-                    <i class="bi bi-check-circle"></i> Disponible
-                </span>
-            @else
-                <span class="badge bg-danger fs-6">
-                    <i class="bi bi-x-circle"></i> Indisponible
-                </span>
-            @endif
+                    @elseif($livre->disponible)
+                        <span class="badge-custom-success">
+                            <i class="bi bi-check-circle"></i> Disponible
+                        </span>
+                    @else
+                        <span class="badge-custom-danger">
+                            <i class="bi bi-x-circle"></i> Indisponible
+                        </span>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card">
+        <div class="card card-custom">
+            <div class="card-header-custom">
+                <h5 class="mb-0"><i class="bi bi-lightning"></i> Actions</h5>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">Actions</h5>
-                <a href="{{ route('livres.index') }}" class="btn btn-secondary w-100 mb-2">
+                <a href="{{ route('livres.index') }}" class="btn btn-custom-secondary w-100 mb-3">
                     <i class="bi bi-arrow-left"></i> Retour à la liste
                 </a>
                 @auth
@@ -66,7 +79,7 @@
                             <div class="alert alert-info mb-2">
                                 <i class="bi bi-info-circle"></i> Vous avez déjà réservé ce livre.
                             </div>
-                            <a href="{{ route('reservations.index') }}" class="btn btn-info w-100">
+                            <a href="{{ route('reservations.index') }}" class="btn btn-custom-primary w-100">
                                 <i class="bi bi-calendar-check"></i> Voir ma réservation
                             </a>
                         @elseif($livre->disponible)
@@ -82,7 +95,7 @@
                                         ->with('livre')
                                         ->first();
                                 @endphp
-                                <div class="alert alert-warning mb-2">
+                                <div class="alert alert-warning mb-3" style="border-radius: 10px; border-left: 4px solid #f39c12;">
                                     <i class="bi bi-exclamation-triangle"></i> 
                                     <strong>Réservation active en cours</strong><br>
                                     <small>
@@ -93,28 +106,28 @@
                                         Veuillez attendre la fin de cette période ou annuler votre réservation actuelle.
                                     </small>
                                 </div>
-                                <a href="{{ route('reservations.index') }}" class="btn btn-warning w-100">
+                                <a href="{{ route('reservations.index') }}" class="btn btn-custom-warning w-100">
                                     <i class="bi bi-calendar-check"></i> Voir ma réservation
                                 </a>
                             @else
-                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#reservationModal">
+                                <button type="button" class="btn btn-custom-primary w-100" data-bs-toggle="modal" data-bs-target="#reservationModal">
                                     <i class="bi bi-calendar-check"></i> Réserver ce livre
                                 </button>
                             @endif
                         @else
-                            <div class="alert alert-warning mb-2">
+                            <div class="alert alert-warning mb-3" style="border-radius: 10px; border-left: 4px solid #f39c12;">
                                 <i class="bi bi-exclamation-triangle"></i> Ce livre n'est pas disponible.
                             </div>
                         @endif
                     @endif
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.livres.edit', $livre) }}" class="btn btn-warning w-100 mb-2">
+                        <a href="{{ route('admin.livres.edit', $livre) }}" class="btn btn-custom-warning w-100 mb-3">
                             <i class="bi bi-pencil"></i> Modifier
                         </a>
                         <form action="{{ route('admin.livres.destroy', $livre) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Êtes-vous sûr?')">
+                            <button type="submit" class="btn btn-custom-danger w-100" onclick="return confirm('Êtes-vous sûr?')">
                                 <i class="bi bi-trash"></i> Supprimer
                             </button>
                         </form>
@@ -192,8 +205,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-primary">Réserver</button>
+                            <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-custom-primary">Réserver</button>
                         </div>
                     </form>
                 </div>
